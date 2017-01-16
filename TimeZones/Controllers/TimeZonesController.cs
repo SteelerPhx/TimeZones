@@ -35,36 +35,42 @@ namespace TimeZones.Controllers
 
 		[Route("now")]
 		[HttpGet]
-		public ZonedDateTime Now(string tz)
+		public DateTimeOffset Now(string tz)
 		{
 			var clock = SystemClock.Instance;
 			Instant now = clock.Now;
 			var zone = DateTimeZoneProviders.Tzdb[tz];
-			return now.InZone(zone);
+			return now.InZone(zone).ToDateTimeOffset();
 		}
 
-		//[Route("convert")]
-		//[HttpGet]
-		//public DateTime Get(string fromTZ, string toTZ, DateTimeOffset time)
-		//{			
-		//	// convert passed DateTimeOffset to utc moment
-		//	var momentTime = Moment.Create(time.UtcDateTime);
+		[Route("convert")]
+		[HttpGet]
+		public DateTime Get(DateTime time, string fromTZ, string toTZ)
+		{			
+			LocalDateTime fromLocal = LocalDateTime.FromDateTime(time);
+			DateTimeZone fromZone = DateTimeZoneProviders.Tzdb[fromTZ];
+			ZonedDateTime fromZoned = fromLocal.InZoneLeniently(fromZone);
 
-		//	// get raw from/to timezones
-		//	var fromTimeZone = this.tzUseCases.GetTimeZoneWithIanaId(fromId);
-		//	var toTimeZone = this.tzUseCases.GetTimeZoneWithIanaId(toId);
+			DateTimeZone toZone = DateTimeZoneProviders.Tzdb[toTZ];
+			ZonedDateTime toZoned = fromZoned.WithZone(toZone);
+			LocalDateTime toLocal = toZoned.LocalDateTime;
+			return toLocal.ToDateTimeUnspecified();
 
-		//	//var isDst = fromTimeZone.GetDstOffset(momentTime) != fromTimeZone.GetRawOffset(momentTime);
+			// get raw from/to timezones
+			//var fromTimeZone = this.tzUseCases.GetTimeZoneWithIanaId(fromId);
+			//var toTimeZone = this.tzUseCases.GetTimeZoneWithIanaId(toId);
 
-		//	// determine the offset for "from" timezone
-		//	var fromOffset = fromTimeZone.GetDstOffset(momentTime);
-		//	// determine the offset for "to" timezone
-		//	var toOffset = toTimeZone.GetDstOffset(momentTime);
+			////var isDst = fromTimeZone.GetDstOffset(momentTime) != fromTimeZone.GetRawOffset(momentTime);
 
-		//	// get the diff (this timespan will be added to the original time
-		//	var diff = toOffset - fromOffset;
-		//	return time.Add(diff);
-		//}
+			//// determine the offset for "from" timezone
+			//var fromOffset = fromTimeZone.GetDstOffset(momentTime);
+			//// determine the offset for "to" timezone
+			//var toOffset = toTimeZone.GetDstOffset(momentTime);
+
+			//// get the diff (this timespan will be added to the original time
+			//var diff = toOffset - fromOffset;
+			//return time.Add(diff);
+		}
 
 	}
 }
