@@ -55,21 +55,6 @@ namespace TimeZones.Controllers
 			ZonedDateTime toZoned = fromZoned.WithZone(toZone);
 			LocalDateTime toLocal = toZoned.LocalDateTime;
 			return toLocal.ToDateTimeUnspecified();
-
-			// get raw from/to timezones
-			//var fromTimeZone = this.tzUseCases.GetTimeZoneWithIanaId(fromId);
-			//var toTimeZone = this.tzUseCases.GetTimeZoneWithIanaId(toId);
-
-			////var isDst = fromTimeZone.GetDstOffset(momentTime) != fromTimeZone.GetRawOffset(momentTime);
-
-			//// determine the offset for "from" timezone
-			//var fromOffset = fromTimeZone.GetDstOffset(momentTime);
-			//// determine the offset for "to" timezone
-			//var toOffset = toTimeZone.GetDstOffset(momentTime);
-
-			//// get the diff (this timespan will be added to the original time
-			//var diff = toOffset - fromOffset;
-			//return time.Add(diff);
 		}
 
 	}
